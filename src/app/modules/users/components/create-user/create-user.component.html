@@ -1,0 +1,121 @@
+<div class="container my-4">
+  <h1 class="d-flex justify-content-center">Novo usuário</h1>
+
+  <form [formGroup]="userForm">
+    <fieldset>
+      <legend>Dados pessoais</legend>
+      <div class="row">
+        <div class="col-3">
+          <mat-form-field appearance="outline">
+            <mat-label>Nome</mat-label>
+            <input matInput formControlName="name" />
+          </mat-form-field>
+        </div>
+        <div class="col-3">
+          <mat-form-field appearance="outline">
+            <mat-label>Profissão</mat-label>
+            <input matInput formControlName="profession" />
+          </mat-form-field>
+        </div>
+        <div class="col-3">
+          <mat-form-field appearance="outline">
+            <mat-label>Data de nascimento</mat-label>
+            <input matInput formControlName="birthDate" mask="00/00/0000" />
+          </mat-form-field>
+        </div>
+        <div class="col-3">
+          <mat-form-field appearance="outline">
+            <mat-label>CPF</mat-label>
+            <input matInput formControlName="documentNumber" />
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-3">
+          <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email" />
+          </mat-form-field>
+        </div>
+        <div class="col-3">
+          <mat-form-field appearance="outline">
+            <mat-label>Senha</mat-label>
+            <input matInput formControlName="password" />
+          </mat-form-field>
+        </div>
+        <div class="col-3">
+          <mat-form-field appearance="outline">
+            <mat-label>Telefone</mat-label>
+            <input
+              matInput
+              formControlName="phone"
+              prefix="+55 "
+              [mask]="phoneMask"
+            />
+          </mat-form-field>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset formGroupName="address">
+      <legend>Endereço</legend>
+      <div class="row">
+        <div class="col-3">
+          <mat-form-field appearance="outline">
+            <mat-label>CEP</mat-label>
+            <input matInput formControlName="zipCode" mask="00000-000" />
+          </mat-form-field>
+        </div>
+        <div class="col-3">
+          <mat-form-field appearance="outline">
+            <mat-label>Rua</mat-label>
+            <input matInput formControlName="street" />
+          </mat-form-field>
+        </div>
+        <div class="col-3">
+          <mat-form-field appearance="outline">
+            <mat-label>Número</mat-label>
+            <input matInput formControlName="number" />
+          </mat-form-field>
+        </div>
+        <div class="col-3">
+          <mat-form-field appearance="outline">
+            <mat-label>Complemento</mat-label>
+            <input matInput formControlName="complement" />
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-3">
+          <mat-form-field appearance="outline">
+            <mat-label>Bairro</mat-label>
+            <input matInput formControlName="neighborhood" />
+          </mat-form-field>
+        </div>
+        <div class="col-3">
+          <mat-form-field appearance="outline">
+            <mat-label>Cidade</mat-label>
+            <input matInput formControlName="city" />
+          </mat-form-field>
+        </div>
+        <div class="col-3">
+          <mat-form-field appearance="outline">
+            <mat-label>Estado</mat-label>
+            <input matInput formControlName="state" />
+          </mat-form-field>
+        </div>
+      </div>
+    </fieldset>
+
+    <button mat-flat-button (click)="onCancel()">Voltar</button>
+    <button
+      mat-flat-button
+      (click)="onSubmit()"
+      [disabled]="userForm.invalid"
+      color="primary"
+      cdkFocusInitial
+    >
+      Salvar
+    </button>
+  </form>
+</div>

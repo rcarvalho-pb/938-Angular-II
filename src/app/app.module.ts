@@ -12,12 +12,14 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { LoginComponent } from './auth/login/login.component';
 import { HeaderComponent } from './shared/header/header.component';
-import { CreateUserComponent } from './users/components/create-user/create-user.component';
-import { ListComponent } from './users/components/list/list.component';
-import { UsersComponent } from './users/users.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { LoginComponent } from './modules/auth/login/login.component';
+import { UsersComponent } from './modules/users/users.component';
+import { CreateUserComponent } from './modules/users/components/create-user/create-user.component';
+import { ListComponent } from './modules/users/components/list/list.component';
+import { NotFoundComponent } from './shared/not-found/not-found.component';
+import { NgxMaskModule } from 'ngx-mask';
 
 const material = [
   MatCardModule,
@@ -38,6 +40,7 @@ const material = [
     ListComponent,
     CreateUserComponent,
     HeaderComponent,
+    NotFoundComponent,
   ],
   imports: [
     BrowserModule,
@@ -45,6 +48,7 @@ const material = [
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
+    NgxMaskModule.forRoot(),
     material,
   ],
   providers: [],
