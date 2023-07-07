@@ -5,7 +5,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { User } from 'src/app/models/user.model';
 
 @Component({
@@ -15,16 +15,39 @@ import { User } from 'src/app/models/user.model';
 })
 export class CreateUserComponent implements OnInit {
   public users!: User[];
+  public user?: User;
+  public id?: string;
+  public title = 'Novo Usuário';
 
   public userForm!: FormGroup;
 
   public phoneMask = '(00) 0 0000-0000';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private route: ActivatedRoute) {}
 
   ngOnInit(): void {
     this.buildForm();
     this.phoneNumberSubscription();
+
+    const fruits = new Map([
+      ['apples', 500],
+      ['bananas', 300],
+      ['oranges', 200],
+    ]);
+    console.log(fruits);
+
+    const arr = Array.from(fruits);
+    console.log(arr);
+
+    this.id = this.route.snapshot.params['id'];
+    // this.route.params.subscribe((value) => console.log(value));
+
+    if (this.id) {
+      this.users = JSON.parse(localStorage.getItem('USERS') || '[]');
+      this.user = this.users.find((u) => u.id === this.id);
+      this.title = 'Editar Usuário';
+      this.updateForm();
+    }
   }
 
   public buildForm(): void {
@@ -60,14 +83,27 @@ export class CreateUserComponent implements OnInit {
     });
   }
 
+  private updateForm(): void {
+    this.userForm.patchValue(this.user as User);
+  }
+
   public onSubmit(): void {
     this.users = JSON.parse(localStorage.getItem('USERS') || '[]');
-    const user: User = {
+
+    this.user = {
       ...this.userForm.getRawValue(),
-      id: crypto.randomUUID(),
+      id: this.user?.id ?? crypto.randomUUID(),
     };
-    this.users.push(user);
+
+    if (this.id) {
+      const index = this.users.findIndex((u) => u.id === this.id);
+      this.users[index] = this.user!;
+    } else {
+      this.users.push(this.user!);
+    }
+
     localStorage.setItem('USERS', JSON.stringify(this.users));
+    this.router.navigate(['/users']);
   }
 
   public onCancel(): void {
