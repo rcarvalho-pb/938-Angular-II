@@ -1,9 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { LoginComponent } from './modules/auth/login/login.component';
-import { CreateUserComponent } from './modules/users/components/create-user/create-user.component';
-import { ListComponent } from './modules/users/components/list/list.component';
-import { UsersComponent } from './modules/users/users.component';
 import { NotFoundComponent } from './shared/not-found/not-found.component';
 
 const routes: Routes = [
@@ -13,26 +9,21 @@ const routes: Routes = [
     pathMatch: 'full',
   },
   {
-    path: 'auth/login',
-    component: LoginComponent,
+    path: 'auth',
+    loadChildren: () =>
+      import('./modules/auth/auth.module').then((m) => m.AuthModule),
   },
   {
     path: 'users',
-    component: UsersComponent,
-    children: [
-      {
-        path: '',
-        component: ListComponent,
-      },
-      {
-        path: 'create',
-        component: CreateUserComponent,
-      },
-      {
-        path: 'edit/:id',
-        component: CreateUserComponent,
-      },
-    ],
+    loadChildren: () =>
+      import('./modules/users/users.module').then((m) => m.UsersModule),
+  },
+  {
+    path: 'products',
+    loadChildren: () =>
+      import('./modules/products/products.module').then(
+        (m) => m.ProductsModule
+      ),
   },
   {
     path: '**',

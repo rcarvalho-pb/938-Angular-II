@@ -6,12 +6,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
-import { AppRoutingModule } from 'src/app/app-routing.module';
+import { AuthRoutingModule } from './auth-routing.module';
 
 @NgModule({
   declarations: [LoginComponent],
   imports: [
-    AppRoutingModule,
+    AuthRoutingModule,
     CommonModule,
     FormsModule,
     MatCardModule,

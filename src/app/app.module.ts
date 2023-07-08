@@ -16,8 +16,6 @@ import { SharedModule } from './shared/shared.module';
     BrowserAnimationsModule,
     NgxMaskModule.forRoot(),
     SharedModule,
-    AuthModule,
-    UsersModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
