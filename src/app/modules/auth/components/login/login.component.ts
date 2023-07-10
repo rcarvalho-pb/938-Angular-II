@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from 'src/app/models/user.model';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -12,23 +13,25 @@ export class LoginComponent implements OnInit {
   public password?: string;
   public users!: User[];
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private authService: AuthService) {}
 
   ngOnInit(): void {
     this.users = JSON.parse(localStorage.getItem('USERS') || '[]');
   }
 
   public login(): void {
-    const user = this.users.find(
-      (u) => u.email === this.email && u.password === this.password
-    );
+    const result = this.authService.login({
+      email: this.email,
+      password: this.password,
+    });
 
-    if (!user) {
-      return console.log('Falha ao logar!');
+    console.log(typeof result);
+
+    if (typeof result === 'string') {
+      return;
     }
 
-    console.log('Usuário autenticado', user);
-    localStorage.setItem('USER', JSON.stringify(user));
+    console.log(result);
 
     this.router.navigate(['/users']);
   }
