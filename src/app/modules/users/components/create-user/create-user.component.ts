@@ -6,7 +6,20 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map } from 'rxjs';
+import {
+  Observable,
+  catchError,
+  debounceTime,
+  delay,
+  distinctUntilChanged,
+  filter,
+  first,
+  map,
+  merge,
+  mergeMap,
+  switchAll,
+  switchMap,
+} from 'rxjs';
 import { User } from 'src/app/modules/users/models/user.model';
 import { AddressDto } from '../../models/address.dto';
 import { Address } from '../../models/address.model';
@@ -109,9 +122,21 @@ export class CreateUserComponent implements OnInit {
     this.userForm
       .get('address')
       ?.get('zipCode')
-      ?.valueChanges // .pipe(filter((value) => value.length === 8))
-      .subscribe((value) => {
-        this.getAddressByZipCode(value);
+      ?.valueChanges.pipe(
+        debounceTime(2000),
+        // delay(5),
+        filter((value) => value.length === 8),
+        distinctUntilChanged(
+          (prev, next) => JSON.stringify(prev) === JSON.stringify(next)
+        )
+      )
+      .subscribe({
+        next: (response) => {
+          this.getAddressByZipCode(response);
+        },
+        error: (err) => {
+          console.log(err);
+        },
       });
   }
 
@@ -119,6 +144,7 @@ export class CreateUserComponent implements OnInit {
     this.usersService
       .getAddressByZipCode(zipCode)
       .pipe(
+        first(),
         map((address: AddressDto) => {
           const mappedAdress: Address = {
             zipCode: address.cep,
@@ -131,8 +157,13 @@ export class CreateUserComponent implements OnInit {
           return mappedAdress;
         })
       )
-      .subscribe((address: Address) => {
-        this.userForm.patchValue(address);
+      .subscribe({
+        next: (address: Address) => {
+          this.userForm.get('address')?.patchValue(address);
+        },
+        error: (err) => {
+          console.log(err);
+        },
       });
   }
 
