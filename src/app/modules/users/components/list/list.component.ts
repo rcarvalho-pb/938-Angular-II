@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { User } from 'src/app/models/user.model';
+import { User } from 'src/app/modules/users/models/user.model';
+import { UsersService } from '../../services/users.service';
 
 @Component({
   selector: 'app-list',
@@ -9,7 +10,18 @@ import { User } from 'src/app/models/user.model';
 export class ListComponent implements OnInit {
   public users!: User[];
 
+  constructor(private usersService: UsersService) {}
+
   ngOnInit(): void {
-    this.users = JSON.parse(localStorage.getItem('USERS') || '[]');
+    this.getUsers();
+  }
+
+  public onDelete(id: string): void {
+    this.usersService.delete(id);
+    this.getUsers();
+  }
+
+  public getUsers(): void {
+    this.users = this.usersService.findAll();
   }
 }

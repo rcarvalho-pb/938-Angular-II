@@ -6,7 +6,11 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { User } from 'src/app/models/user.model';
+import { map } from 'rxjs';
+import { User } from 'src/app/modules/users/models/user.model';
+import { AddressDto } from '../../models/address.dto';
+import { Address } from '../../models/address.model';
+import { UsersService } from '../../services/users.service';
 
 @Component({
   selector: 'app-create-user',
@@ -23,28 +27,22 @@ export class CreateUserComponent implements OnInit {
 
   public phoneMask = '(00) 0 0000-0000';
 
-  constructor(private router: Router, private route: ActivatedRoute) {}
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private usersService: UsersService
+  ) {}
 
   ngOnInit(): void {
     this.buildForm();
     this.phoneNumberSubscription();
-
-    const fruits = new Map([
-      ['apples', 500],
-      ['bananas', 300],
-      ['oranges', 200],
-    ]);
-    console.log(fruits);
-
-    const arr = Array.from(fruits);
-    console.log(arr);
+    this.zipCodeSubscription();
 
     this.id = this.route.snapshot.params['id'];
     // this.route.params.subscribe((value) => console.log(value));
 
     if (this.id) {
-      this.users = JSON.parse(localStorage.getItem('USERS') || '[]');
-      this.user = this.users.find((u) => u.id === this.id);
+      this.user = this.usersService.findById(this.id);
       this.title = 'Editar Usuário';
       this.updateForm();
     }
@@ -88,21 +86,11 @@ export class CreateUserComponent implements OnInit {
   }
 
   public onSubmit(): void {
-    this.users = JSON.parse(localStorage.getItem('USERS') || '[]');
-
-    this.user = {
-      ...this.userForm.getRawValue(),
-      id: this.user?.id ?? crypto.randomUUID(),
-    };
-
     if (this.id) {
-      const index = this.users.findIndex((u) => u.id === this.id);
-      this.users[index] = this.user!;
+      this.usersService.update(this.userForm.getRawValue());
     } else {
-      this.users.push(this.user!);
+      this.usersService.create(this.userForm.getRawValue());
     }
-
-    localStorage.setItem('USERS', JSON.stringify(this.users));
     this.router.navigate(['/users']);
   }
 
@@ -115,6 +103,37 @@ export class CreateUserComponent implements OnInit {
       this.phoneMask =
         value.length === 10 ? '(00) 0000-00009' : '(00) 0 0000-0000';
     });
+  }
+
+  private zipCodeSubscription(): void {
+    this.userForm
+      .get('address')
+      ?.get('zipCode')
+      ?.valueChanges // .pipe(filter((value) => value.length === 8))
+      .subscribe((value) => {
+        this.getAddressByZipCode(value);
+      });
+  }
+
+  private getAddressByZipCode(zipCode: string): void {
+    this.usersService
+      .getAddressByZipCode(zipCode)
+      .pipe(
+        map((address: AddressDto) => {
+          const mappedAdress: Address = {
+            zipCode: address.cep,
+            street: address.logradouro,
+            complement: address.complemento,
+            city: address.localidade,
+            neighborhood: address.bairro,
+            state: address.uf,
+          };
+          return mappedAdress;
+        })
+      )
+      .subscribe((address: Address) => {
+        this.userForm.patchValue(address);
+      });
   }
 
   private documentValidator({ value }: FormControlState<string>) {

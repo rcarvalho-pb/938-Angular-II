@@ -1,5 +1,6 @@
+import { Observable } from 'rxjs';
 import { UsersService } from '../../users/services/users.service';
-import { User } from './../../../models/user.model';
+import { User } from '../../users/models/user.model';
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -25,5 +26,42 @@ export class AuthService {
 
   public logout(): void {
     localStorage.removeItem('USER');
+  }
+
+  public generateObservable(): Observable<string> {
+    return new Observable<string>((observer) => {
+      // setTimeout(() => {
+      //   observer.next({
+      //     name: 'Nome',
+      //     age: 25,
+      //   });
+      // }, 2000);
+
+      setTimeout(() => {
+        observer.next('Primeiro timeout');
+      }, 2000);
+
+      setTimeout(() => {
+        observer.next('Segundo timeout');
+        // observer.error('Erro no observable');
+        // observer.complete();
+      }, 3000);
+
+      setTimeout(() => {
+        observer.next('Terceiro timeout');
+      }, 5000);
+
+      setTimeout(() => {
+        observer.next('Quarto timeout');
+      }, 4000);
+
+      setTimeout(() => {
+        observer.next('Quinto timeout');
+      }, 6000);
+
+      setTimeout(() => {
+        observer.next('Sexto timeout');
+      }, 7000);
+    });
   }
 }

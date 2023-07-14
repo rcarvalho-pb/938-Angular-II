@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { User } from 'src/app/models/user.model';
+import { Subject, takeUntil } from 'rxjs';
+import { User } from 'src/app/modules/users/models/user.model';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
@@ -8,7 +9,9 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
+  private ngUnsubscribe = new Subject();
+
   public email?: string;
   public password?: string;
   public users!: User[];
@@ -17,6 +20,32 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     this.users = JSON.parse(localStorage.getItem('USERS') || '[]');
+
+    const observable = this.authService.generateObservable();
+
+    observable
+      .pipe(
+        // first()
+        // take(2)
+        takeUntil(this.ngUnsubscribe)
+        // map((res) => {
+        //   return {
+        //     ...res,
+        //     lastname: 'Sobrenome',
+        //   };
+        // })
+      )
+      .subscribe({
+        next(value) {
+          console.log(value);
+        },
+        error(err) {
+          console.log(err);
+        },
+        complete() {
+          console.log('Completo!');
+        },
+      });
   }
 
   public login(): void {
@@ -34,5 +63,10 @@ export class LoginComponent implements OnInit {
     console.log(result);
 
     this.router.navigate(['/users']);
+  }
+
+  ngOnDestroy(): void {
+    this.ngUnsubscribe.next(true);
+    this.ngUnsubscribe.complete();
   }
 }
