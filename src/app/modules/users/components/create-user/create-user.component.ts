@@ -6,20 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-  Observable,
-  catchError,
-  debounceTime,
-  delay,
-  distinctUntilChanged,
-  filter,
-  first,
-  map,
-  merge,
-  mergeMap,
-  switchAll,
-  switchMap,
-} from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, first, map } from 'rxjs';
 import { User } from 'src/app/modules/users/models/user.model';
 import { AddressDto } from '../../models/address.dto';
 import { Address } from '../../models/address.model';
@@ -55,7 +42,7 @@ export class CreateUserComponent implements OnInit {
     // this.route.params.subscribe((value) => console.log(value));
 
     if (this.id) {
-      this.user = this.usersService.findById(this.id);
+      // this.user = this.usersService.findById(this.id);
       this.title = 'Editar Usuário';
       this.updateForm();
     }

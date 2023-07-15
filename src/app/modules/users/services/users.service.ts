@@ -10,51 +10,24 @@ import { Observable } from 'rxjs';
 export class UsersService {
   constructor(private http: HttpClient) {}
 
-  public findAll(): User[] {
-    return JSON.parse(localStorage.getItem('USERS') || '[]');
+  public findAll(): Observable<User[]> {
+    return this.http.get<User[]>('http://localhost:5000/users');
   }
 
-  public findByEmail(email: string): User | undefined {
-    const users = this.findAll();
-    return users.find((u) => u.email === email);
+  public findById(id: string): Observable<User> {
+    return this.http.get<User>(`http://localhost:5000/users/${id}`);
   }
 
-  public findById(id: string): User | undefined {
-    const users = this.findAll();
-    return users.find((u) => u.id === id);
+  public create(user: User): Observable<any> {
+    return this.http.post<any>('http://localhost:5000/users', user);
   }
 
-  public create(user: User): boolean {
-    if (this.findByEmail(user.email)) {
-      return false;
-    }
-    user.id = crypto.randomUUID();
-
-    const users = this.findAll();
-    users.push(user);
-    this.setLocalStorage(users);
-    return true;
+  public update(user: User): Observable<any> {
+    return this.http.put<User>(`http://localhost:5000/users/${user.id}`, user);
   }
 
-  public delete(id: string): void {
-    const users = this.findAll();
-    const usersFiltered = users.filter((u) => u.id !== id);
-    this.setLocalStorage(usersFiltered);
-  }
-
-  public update(user: User): boolean {
-    const users = this.findAll();
-    const idFound = users.findIndex((u) => u.id === user.id);
-    if (idFound < 0) {
-      return false;
-    }
-    users[idFound] = user;
-    this.setLocalStorage(users);
-    return true;
-  }
-
-  private setLocalStorage(users: User[]): void {
-    localStorage.setItem('USERS', JSON.stringify(users));
+  public delete(id: string): Observable<void> {
+    return this.http.delete<void>(`http://localhost:5000/users/${id}`);
   }
 
   public getAddressByZipCode(zipCode: string): Observable<AddressDto> {
