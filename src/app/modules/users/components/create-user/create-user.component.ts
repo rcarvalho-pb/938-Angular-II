@@ -6,11 +6,21 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { debounceTime, distinctUntilChanged, filter, first, map } from 'rxjs';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  first,
+  map,
+  tap,
+} from 'rxjs';
 import { User } from 'src/app/modules/users/models/user.model';
 import { AddressDto } from '../../models/address.dto';
 import { Address } from '../../models/address.model';
 import { UsersService } from '../../services/users.service';
+import { formatDate } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
+import { SnackbarService } from 'src/app/shared/services/snackbar.service';
 
 @Component({
   selector: 'app-create-user',
@@ -30,7 +40,8 @@ export class CreateUserComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private snackbarService: SnackbarService
   ) {}
 
   ngOnInit(): void {
@@ -42,9 +53,9 @@ export class CreateUserComponent implements OnInit {
     // this.route.params.subscribe((value) => console.log(value));
 
     if (this.id) {
-      // this.user = this.usersService.findById(this.id);
       this.title = 'Editar Usuário';
       this.updateForm();
+      this.getUserById();
     }
   }
 
@@ -81,17 +92,85 @@ export class CreateUserComponent implements OnInit {
     });
   }
 
+  private getUserById(): void {
+    this.usersService
+      .findById(this.id!)
+      .pipe(
+        first(),
+        tap({
+          next: (user: User) => {
+            user.birthDate = formatDate(user.birthDate, 'dd/MM/yyyy', 'en-US');
+          },
+        })
+      )
+      .subscribe({
+        next: (response: User) => {
+          this.user = response;
+          this.updateForm();
+        },
+        error: (err: HttpErrorResponse) => {
+          this.snackbarService.openSnackBar(
+            err.error.message || 'Houve um erro. Por favor, tente novamente.'
+          );
+        },
+      });
+  }
+
   private updateForm(): void {
     this.userForm.patchValue(this.user as User);
   }
 
   public onSubmit(): void {
+    const user: User = this.userForm.getRawValue();
+    // const splitedDate = user.birthDate.split('/');
+    // const day: string = splitedDate[0];
+    // const month: string = splitedDate[1];
+    // const year: string = splitedDate[2];
+
+    // const newDate = new Date(Number(year), parseInt(month) - 1, +day);
+    // const formatedDate = formatDate(newDate, 'yyyy-MM-ddTHH:mm:ss', 'en-US');
+    // user.birthDate = formatedDate;
+
+    const [day, month, year] = user.birthDate.split('/');
+    user.birthDate = formatDate(
+      new Date(Number(year), parseInt(month) - 1, +day),
+      'yyyy-MM-ddTHH:mm:ss',
+      'en-US'
+    );
+
     if (this.id) {
-      this.usersService.update(this.userForm.getRawValue());
+      this.update(user);
     } else {
-      this.usersService.create(this.userForm.getRawValue());
+      this.save(user);
     }
-    this.router.navigate(['/users']);
+  }
+
+  public save(user: User): void {
+    this.usersService
+      .create(user)
+      .pipe(first())
+      .subscribe({
+        error: (err) => {
+          this.snackbarService.openSnackBar(err.error.message);
+        },
+        complete: () => {
+          this.router.navigate(['/users']);
+        },
+      });
+  }
+
+  public update(user: User): void {
+    this.usersService
+      .update(user)
+      .pipe(first())
+      .subscribe({
+        error: (err) => {
+          this.snackbarService.openSnackBar(err.error.message);
+        },
+        complete: () => {
+          this.router.navigate(['/users']);
+        },
+      });
   }
 
   public onCancel(): void {

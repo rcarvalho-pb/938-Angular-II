@@ -20,7 +20,12 @@
         <div class="col-3">
           <mat-form-field appearance="outline">
             <mat-label>Data de nascimento</mat-label>
-            <input matInput formControlName="birthDate" mask="00/00/0000" />
+            <input
+              matInput
+              formControlName="birthDate"
+              mask="00/00/0000"
+              [dropSpecialCharacters]="false"
+            />
           </mat-form-field>
         </div>
         <div class="col-3">

@@ -5,6 +5,7 @@ import { User } from 'src/app/modules/users/models/user.model';
 import { AuthService } from '../../services/auth.service';
 import { LoginCredentials } from '../../models/login-credentials.model';
 import { SnackbarService } from 'src/app/shared/services/snackbar.service';
+import { GlobalConstants } from 'src/app/common/global-constants';
 
 @Component({
   selector: 'app-login',
@@ -35,7 +36,7 @@ export class LoginComponent implements OnInit {
       .pipe(first())
       .subscribe({
         next: (response) => {
-          console.log(response);
+          localStorage.setItem(GlobalConstants.USER_TOKEN, response.token);
         },
         error: (err) => {
           console.log(err);
