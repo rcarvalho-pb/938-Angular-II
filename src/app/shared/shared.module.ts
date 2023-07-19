@@ -8,9 +8,16 @@ import { ZipCodeMaskPipe } from './pipes/zip-code-mask.pipe';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { HeaderComponent } from './components/header/header.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
+import { LoadingComponent } from './components/loading/loading.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
-  declarations: [HeaderComponent, NotFoundComponent, ZipCodeMaskPipe],
+  declarations: [
+    HeaderComponent,
+    NotFoundComponent,
+    ZipCodeMaskPipe,
+    LoadingComponent,
+  ],
   imports: [
     AppRoutingModule,
     CommonModule,
@@ -18,7 +25,13 @@ import { NotFoundComponent } from './components/not-found/not-found.component';
     MatButtonModule,
     MatIconModule,
     MatSnackBarModule,
+    MatProgressSpinnerModule,
   ],
-  exports: [HeaderComponent, NotFoundComponent, ZipCodeMaskPipe],
+  exports: [
+    HeaderComponent,
+    NotFoundComponent,
+    LoadingComponent,
+    ZipCodeMaskPipe,
+  ],
 })
 export class SharedModule {}

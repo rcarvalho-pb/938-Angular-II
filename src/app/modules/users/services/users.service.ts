@@ -14,30 +14,23 @@ export class UsersService {
   constructor(private http: HttpClient) {}
 
   public findAll(): Observable<User[]> {
-    return this.http.get<User[]>(`${this.apiURL}/users`, this.setHeaders());
+    return this.http.get<User[]>(`${this.apiURL}/users`);
   }
 
   public findById(id: string): Observable<User> {
-    return this.http.get<User>(`${this.apiURL}/users/${id}`, this.setHeaders());
+    return this.http.get<User>(`${this.apiURL}/users/${id}`);
   }
 
   public create(user: User): Observable<any> {
-    return this.http.post<any>(`${this.apiURL}/users`, user, this.setHeaders());
+    return this.http.post<any>(`${this.apiURL}/users`, user);
   }
 
   public update(user: User): Observable<any> {
-    return this.http.put<User>(
-      `${this.apiURL}/users/${user.id}`,
-      user,
-      this.setHeaders()
-    );
+    return this.http.put<User>(`${this.apiURL}/users/${user.id}`, user);
   }
 
   public delete(id: string): Observable<void> {
-    return this.http.delete<void>(
-      `${this.apiURL}/users/${id}`,
-      this.setHeaders()
-    );
+    return this.http.delete<void>(`${this.apiURL}/users/${id}`);
   }
 
   public getAddressByZipCode(zipCode: string): Observable<AddressDto> {
