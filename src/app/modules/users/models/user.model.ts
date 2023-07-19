@@ -11,4 +11,5 @@ export interface User {
   phone: string;
   income?: number;
   address: Address;
+  roles?: string[];
 }

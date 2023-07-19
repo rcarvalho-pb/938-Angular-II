@@ -36,6 +36,11 @@ export class LoginComponent implements OnInit {
       .pipe(first())
       .subscribe({
         next: (response) => {
+          const user: Partial<User> = {
+            ...response.user,
+            roles: ['VIEW'],
+          };
+          localStorage.setItem(GlobalConstants.USER, JSON.stringify(user));
           localStorage.setItem(GlobalConstants.USER_TOKEN, response.token);
         },
         error: (err) => {

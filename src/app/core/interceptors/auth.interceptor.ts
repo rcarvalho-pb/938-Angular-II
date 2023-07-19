@@ -26,10 +26,6 @@ export class AuthInterceptor implements HttpInterceptor {
 
     const token = localStorage.getItem(GlobalConstants.USER_TOKEN);
 
-    if (!token) {
-      this.router.navigate(['/auth/login']);
-    }
-
     const modifiedRequest = request.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`,
